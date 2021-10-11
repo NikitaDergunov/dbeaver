@@ -38,6 +38,7 @@ import org.jkiss.utils.CommonUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MySQLExportSettings extends AbstractImportExportSettings<DBSObject>
@@ -326,7 +327,12 @@ public class MySQLExportSettings extends AbstractImportExportSettings<DBSObject>
                         return "null";
                     }
                 case NativeToolUtils.VARIABLE_TIMESTAMP:
-                    return RuntimeUtils.getCurrentTimeStamp();
+                    try {
+                        return new SimpleDateFormat(getOutputTimestampPattern()).format(new Date());
+                    } catch (Exception e) {
+                        log.error(e);
+                        return "BAD_TIMESTAMP";
+                    }
                 case NativeToolUtils.VARIABLE_DATE:
                     return RuntimeUtils.getCurrentDate();
                 default:

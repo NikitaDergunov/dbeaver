@@ -17,11 +17,13 @@
  */
 package org.jkiss.dbeaver.tasks.nativetool;
 
+import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
 import org.jkiss.dbeaver.Log;
 import org.jkiss.dbeaver.model.preferences.DBPPreferenceStore;
 import org.jkiss.dbeaver.model.runtime.DBRRunnableContext;
 import org.jkiss.dbeaver.model.struct.DBSObject;
+import org.jkiss.dbeaver.utils.GeneralUtils;
 import org.jkiss.dbeaver.utils.RuntimeUtils;
 import org.jkiss.utils.CommonUtils;
 
@@ -32,6 +34,7 @@ public abstract class AbstractImportExportSettings<BASE_OBJECT extends DBSObject
 
     private File outputFolder;
     private String outputFilePattern;
+    private String outputTimestampPattern;
 
     public File getOutputFolder() {
         return outputFolder;
@@ -49,6 +52,15 @@ public abstract class AbstractImportExportSettings<BASE_OBJECT extends DBSObject
         this.outputFilePattern = outputFilePattern;
     }
 
+    @NotNull
+    public String getOutputTimestampPattern() {
+        return outputTimestampPattern;
+    }
+
+    public void setOutputTimestampPattern(@NotNull String outputTimestampPattern) {
+        this.outputTimestampPattern = outputTimestampPattern;
+    }
+
     public void fillExportObjectsFromInput() {
 
     }
@@ -59,6 +71,10 @@ public abstract class AbstractImportExportSettings<BASE_OBJECT extends DBSObject
         this.outputFilePattern = store.getString("export.outputFilePattern");
         if (CommonUtils.isEmpty(this.outputFilePattern)) {
             this.outputFilePattern = "dump-${database}-${timestamp}.sql";
+        }
+        this.outputTimestampPattern = store.getString("export.outputTimestampPattern");
+        if (CommonUtils.isEmpty(this.outputTimestampPattern)) {
+            this.outputTimestampPattern = GeneralUtils.DEFAULT_TIMESTAMP_PATTERN;
         }
         String outputFolderPath = CommonUtils.toString(store.getString("export.outputFolder"));
         if (CommonUtils.isNotEmpty(outputFolderPath)) {
@@ -78,6 +94,7 @@ public abstract class AbstractImportExportSettings<BASE_OBJECT extends DBSObject
     public void saveSettings(DBRRunnableContext runnableContext, DBPPreferenceStore preferenceStore) {
         super.saveSettings(runnableContext, preferenceStore);
         preferenceStore.setValue("export.outputFilePattern", this.outputFilePattern);
+        preferenceStore.setValue("export.outputTimestampPattern", this.outputTimestampPattern);
         preferenceStore.setValue("export.outputFolder", this.outputFolder.getAbsolutePath());
     }
 

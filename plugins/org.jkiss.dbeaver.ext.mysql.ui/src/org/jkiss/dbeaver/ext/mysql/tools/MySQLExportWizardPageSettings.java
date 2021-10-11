@@ -40,6 +40,7 @@ class MySQLExportWizardPageSettings extends MySQLWizardPageSettings<MySQLExportW
 
     private Text outputFolderText;
     private Text outputFileText;
+    private Text outputTimestampPatternText;
     private Combo methodCombo;
     private Button noCreateStatementsCheck;
     private Button addDropStatementsCheck;
@@ -126,13 +127,14 @@ class MySQLExportWizardPageSettings extends MySQLWizardPageSettings<MySQLExportW
                 GeneralUtils.variablePattern(NativeToolUtils.VARIABLE_TIMESTAMP),
                 GeneralUtils.variablePattern(NativeToolUtils.VARIABLE_CONN_TYPE)));
 
+        outputTimestampPatternText = UIUtils.createLabelText(outputGroup, MySQLUIMessages.tools_db_export_wizard_page_settings_label_timestamp_pattern_text, wizard.getSettings().getOutputTimestampPattern(), SWT.BORDER);
+        outputTimestampPatternText.addModifyListener(e -> updateState());
+
         createExtraArgsInput(outputGroup);
 
         if (wizard.getSettings().getOutputFolder() != null) {
             outputFolderText.setText(wizard.getSettings().getOutputFolder().getAbsolutePath());
         }
-
-        outputFileText.addModifyListener(e -> wizard.getSettings().setOutputFilePattern(outputFileText.getText()));
 
         Composite extraGroup = UIUtils.createComposite(composite, 2);
         createSecurityGroup(extraGroup);
@@ -150,6 +152,7 @@ class MySQLExportWizardPageSettings extends MySQLWizardPageSettings<MySQLExportW
         String fileName = outputFolderText.getText();
         wizard.getSettings().setOutputFolder(CommonUtils.isEmpty(fileName) ? null : new File(fileName));
         settings.setOutputFilePattern(outputFileText.getText());
+        settings.setOutputTimestampPattern(outputTimestampPatternText.getText());
 
         switch (methodCombo.getSelectionIndex()) {
             case 0:

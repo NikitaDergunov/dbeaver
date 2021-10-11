@@ -42,6 +42,7 @@ class PostgreBackupWizardPageSettings extends PostgreToolWizardPageSettings<Post
 
     private Text outputFolderText;
     private Text outputFileText;
+    private Text outputTimestampPatternText;
     private Combo formatCombo;
     private Combo compressCombo;
     private Combo encodingCombo;
@@ -160,7 +161,8 @@ class PostgreBackupWizardPageSettings extends PostgreToolWizardPageSettings<Post
                 GeneralUtils.variablePattern(NativeToolUtils.VARIABLE_DATE),
                 GeneralUtils.variablePattern(NativeToolUtils.VARIABLE_TIMESTAMP),
                 GeneralUtils.variablePattern(NativeToolUtils.VARIABLE_CONN_TYPE)));
-        outputFileText.addModifyListener(e -> wizard.getSettings().setOutputFilePattern(outputFileText.getText()));
+        outputTimestampPatternText = UIUtils.createLabelText(outputGroup, PostgreMessages.wizard_backup_page_setting_label_timestamp_pattern, wizard.getSettings().getOutputTimestampPattern(), SWT.BORDER);
+        outputTimestampPatternText.addModifyListener(e -> updateState());
         fixOutputFileExtension();
 
         createExtraArgsInput(outputGroup);
@@ -213,6 +215,7 @@ class PostgreBackupWizardPageSettings extends PostgreToolWizardPageSettings<Post
         String fileName = outputFolderText.getText();
         settings.setOutputFolder(CommonUtils.isEmpty(fileName) ? null : new File(fileName));
         settings.setOutputFilePattern(outputFileText.getText());
+        settings.setOutputTimestampPattern(outputTimestampPatternText.getText());
 
         settings.setFormat(getChosenExportFormat());
         settings.setCompression(compressCombo.getText());
