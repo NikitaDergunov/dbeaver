@@ -67,7 +67,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
         //Probably would be a good idea to check if color is not null and is a hex number (I chose regex for that)
         //we know that backgroundColor is a string, because we specified so in plugin.xml
         //so finally we have:
-        if((properties.get(PROP_BACKGROUND_COLOR)!=null)&&((String) properties.get(PROP_BACKGROUND_COLOR)).matches("-?[0-9a-fA-F]+"))
+        if((properties.get(PROP_BACKGROUND_COLOR)!=null)&&((String) properties.get(PROP_BACKGROUND_COLOR)).matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
         	outputBackgroundColor =(String) properties.get(PROP_BACKGROUND_COLOR);
     }
 
