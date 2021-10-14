@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * HTML Exporter
@@ -41,6 +42,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
 
     private static final String PROP_HEADER = "tableHeader";
     private static final String PROP_COLUMN_HEADERS = "columnHeaders";
+    private static final String PROP_BACKGROUND_COLOR = "backgroundColor";
 
     private String name;
     private static final int IMAGE_FRAME_SIZE = 200;
@@ -50,6 +52,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
 
     private boolean outputHeader = true;
     private boolean outputColumnHeaders = true;
+    private String outputBackgroundColor ="#D0E3FA"; 
 
     @Override
     public void init(IStreamDataExporterSite site) throws DBException {
@@ -58,6 +61,14 @@ public class DataExporterHTML extends StreamExporterAbstract {
         Map<String, Object> properties = site.getProperties();
         outputHeader = CommonUtils.getBoolean(properties.get(PROP_HEADER), outputHeader);
         outputColumnHeaders = CommonUtils.getBoolean(properties.get(PROP_COLUMN_HEADERS), outputColumnHeaders);
+        //Could not understand the CommonUtils class fully, so I implemented my check
+        //As I understand in line 55 we assign default value, so if parsing from properties fails, we have a value
+        //I suspect in lines 61 and 62 we are checking if bool and returning a bool value. We should do that in our case.
+        //Probably would be a good idea to check if color is not null and is a hex number (I chose regex for that)
+        //we know that backgroundColor is a string, because we specified so in plugin.xml
+        //so finally we have:
+        if((properties.get(PROP_BACKGROUND_COLOR)!=null)&&((String) properties.get(PROP_BACKGROUND_COLOR)).matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"))
+        	outputBackgroundColor =(String) properties.get(PROP_BACKGROUND_COLOR);
     }
 
     @Override
@@ -85,7 +96,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
             "border: thin solid #6495ed;" +
 //              "width: 50%;" +
             "padding: 5px;" +
-            "background-color: #D0E3FA;}" +
+            "background-color: " + outputBackgroundColor + ";}" +
             "td{font-family: sans-serif;" +
             "border: thin solid #6495ed;" +
 //              "width: 50%;" +
